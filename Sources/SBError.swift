@@ -56,6 +56,7 @@ public enum SBError: Error {
     case peripheralCharacteristicNotFound(missingCharacteristicsUUIDs: [CBUUID])
     case peripheralDescriptorsNotFound(missingDescriptorsUUIDs: [CBUUID])
     case invalidDescriptorValue(descriptor: CBDescriptor)
+    case characteristicValueNil
 }
 
 extension SBError: LocalizedError {
@@ -82,6 +83,8 @@ extension SBError: LocalizedError {
             return "Peripheral descriptor(s) not found: \(missingUUIDsString)"
         case .invalidDescriptorValue(let descriptor):
             return "Failed to parse value for descriptor with uuid: \(descriptor.uuid.uuidString)"
+        case .characteristicValueNil:
+            return "Characteristic value is nil"
         }
     }
 }

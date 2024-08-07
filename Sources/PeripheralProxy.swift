@@ -1107,14 +1107,16 @@ extension PeripheralProxy: CBPeripheralDelegate {
         let readPath = characteristic.uuidPath
         
         guard let request = self.readCharacteristicRequests[readPath]?.first else {
-            if characteristic.isNotifying {
-                var userInfo: [AnyHashable: Any] = ["characteristic": characteristic]
-                if let error = error {
-                    userInfo["error"] = error
-                }
-                
-                self.postPeripheralEvent(Peripheral.PeripheralCharacteristicValueUpdate, userInfo: userInfo)
+//            In some cases, it is not always true, causing data forwarding to fail.
+//            if characteristic.isNotifying {
+//                return
+//            }
+            var userInfo: [AnyHashable: Any] = ["characteristic": characteristic]
+            if let error = error {
+                userInfo["error"] = error
             }
+            
+            self.postPeripheralEvent(Peripheral.PeripheralCharacteristicValueUpdate, userInfo: userInfo)
             return
         }
         
@@ -1130,7 +1132,11 @@ extension PeripheralProxy: CBPeripheralDelegate {
         if let error = error {
             request.callback(.failure(error))
         } else {
-            request.callback(.success(characteristic.value!))
+            if let value = characteristic.value {
+                request.callback(.success(value))
+            } else {
+                request.callback(.failure(SBError.characteristicValueNil))
+            }
         }
     }
     
