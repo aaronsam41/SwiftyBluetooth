@@ -389,4 +389,9 @@ extension Peripheral {
                             completion: completion)
     }
     
+    /// The maximum amount of data, in bytes, that can be sent to a characteristic in a single write type.
+    public func maximumWriteValueLength(for type: CBCharacteristicWriteType) -> Int {
+        return self.peripheralProxy.cbPeripheral.maximumWriteValueLength(for: type)
+    }
+    
 }
